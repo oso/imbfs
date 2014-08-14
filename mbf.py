@@ -1,6 +1,7 @@
 from copy import deepcopy
 from itertools import combinations, product
 from profiles import generate_profiles
+import resource
 
 class coa(frozenset):
 
@@ -11,6 +12,9 @@ class coaset(frozenset):
 
     def __repr__(self):
         return "coaset(%s)" % ', '.join(map(str, self))
+
+def cpu_time():
+    return resource.getrusage(resource.RUSAGE_SELF)[0]
 
 def compute_all_coalitions(variables, profiles):
     combis = {}
@@ -63,18 +67,25 @@ def mbf_from_profiles(variables, profile, coalitions):
 
     return mbfs
 
-variables = tuple(['c1', 'c2', 'c3', 'c4', 'c5', 'c6'])
-profiles = generate_profiles(len(variables))
-combis = compute_all_coalitions(variables, profiles)
-#print(combis)
-#print(len(combis))
+if __name__ == "__main__":
+    import sys
 
-mbfs = mbf_from_profiles(variables, (1, 1, 0, 0), combis)
-print(mbfs)
-print(len(mbfs))
+    if len(sys.argv) != 2:
+        print("usage: %s n" % sys.argv[0])
+        sys.exit(1)
 
-n = 0
-for profile in profiles:
-    print("Processing profile %s" % str(profile))
-    n += len(mbf_from_profiles(variables, profile, combis))
-print(n)
+    n = sys.argv[1]
+    variables = tuple(["c%d" % i for i in range(int(n))])
+    print(variables)
+    profiles = generate_profiles(len(variables))
+    combis = compute_all_coalitions(variables, profiles)
+
+    n = 0
+    for profile in profiles:
+        print("Processing profile %s..." % str(profile), end = "")
+        t1 = cpu_time()
+        k = len(mbf_from_profiles(variables, profile, combis))
+        print("\t%10d MBFs found (%.02f seconds)" % (k, (cpu_time() - t1)));
+        n += k
+
+    print(n)
