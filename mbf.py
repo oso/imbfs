@@ -76,14 +76,15 @@ if __name__ == "__main__":
         sys.exit(1)
 
     n = sys.argv[1]
-    variables = tuple(["c%d" % i for i in range(int(n))])
+    variables = tuple(["c%d" % (i + 1) for i in range(int(n))])
     print(variables)
     profiles = generate_profiles(len(variables))
     combis = compute_all_coalitions(variables, profiles)
 
     n = 0
-    for profile in profiles:
-        print("Processing profile %s..." % str(profile), end = "")
+    for i, profile in enumerate(profiles):
+        print("%d. Processing profile %s..." % ((i + 1), str(profile)),
+              end = "")
         t1 = cpu_time()
         k = len(mbf_from_profiles(variables, profile, combis))
         print("\t%10d MBFs found (%.02f seconds)" % (k, (cpu_time() - t1)));
