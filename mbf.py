@@ -1,3 +1,4 @@
+from __future__ import print_function
 from copy import deepcopy
 from itertools import combinations, product
 from profiles import generate_profiles
