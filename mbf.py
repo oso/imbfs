@@ -90,4 +90,5 @@ if __name__ == "__main__":
         print("\t%10d MBFs found (%.02f seconds)" % (k, (cpu_time() - t1)));
         n += k
 
+    print("total time: %.02f seconds" % cpu_time())
     print(n)
