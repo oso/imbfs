@@ -48,9 +48,11 @@ def compute_all_mbfs(n):
 
     pool = multiprocessing.Pool()
     n = 0
-    for i, profile in enumerate(profiles):
+    for profile in profiles:
+        combi = {(i, n): combis[i, n] for i, n in enumerate(profile) if n > 0}
+
         pool.apply_async(compute_number_of_mbfs,
-                         (variables, profile, combis),
+                         (variables, profile, combi),
                          callback = compute_number_of_mbfs_cb)
 
     pool.close()
