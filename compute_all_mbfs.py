@@ -5,16 +5,19 @@ from mbf import compute_all_coalitions
 from mbf import mbf_from_profiles
 from mbf import cpu_time
 
-
+nprofiles_done = 0
 count = 0
 
 def compute_number_of_mbfs_cb(result):
     global count
+    global nprofiles_done
 
     profile, k, t = result
-    print("Profile %s done!\t%10d MBFs found (%.02f seconds)"
-          % (str(profile), k, t));
+    nprofiles_done += 1
     count += k
+
+    print("%d. Profile %s done!\t%10d MBFs found (%.02f seconds)"
+          % (nprofiles_done, str(profile), k, t));
 
 def compute_number_of_mbfs(variables, profile, combis):
     t1 = cpu_time()
@@ -39,6 +42,8 @@ def compute_all_mbfs(n):
     variables = tuple(["c%d" % (i + 1) for i in range(int(n))])
 
     profiles = generate_profiles(len(variables))
+    print("Number of profiles: %d" % len(profiles))
+
     combis = compute_all_coalitions(variables, profiles)
 
     pool = multiprocessing.Pool()
