@@ -1,7 +1,6 @@
 from __future__ import print_function
 from copy import deepcopy
 from itertools import combinations, product
-from profiles import generate_profiles
 import resource
 
 class coa(frozenset):
@@ -70,14 +69,17 @@ def mbf_from_profiles(variables, profile, coalitions):
 
 if __name__ == "__main__":
     import sys
+    from profiles import generate_profiles
 
     if len(sys.argv) != 2:
         print("usage: %s n" % sys.argv[0])
         sys.exit(1)
 
-    n = sys.argv[1]
+    n = int(sys.argv[1])
+    print("Number of variables: %d" % n)
+
     variables = tuple(["c%d" % (i + 1) for i in range(int(n))])
-    print(variables)
+
     profiles = generate_profiles(len(variables))
     combis = compute_all_coalitions(variables, profiles)
 
