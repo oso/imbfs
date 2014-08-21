@@ -3,15 +3,21 @@ from copy import deepcopy
 from itertools import combinations, product
 import resource
 
-class coa(frozenset):
+debug = False
 
-    def __repr__(self):
-        return "coa(%s)" % ', '.join(map(str, self))
+if debug is True:
+    class coa(frozenset):
 
-class coaset(frozenset):
+        def __repr__(self):
+            return "coa(%s)" % ', '.join(map(str, self))
 
-    def __repr__(self):
-        return "coaset(%s)" % ', '.join(map(str, self))
+    class coaset(frozenset):
+
+        def __repr__(self):
+            return "coaset(%s)" % ', '.join(map(str, self))
+else:
+    coa = frozenset
+    coaset = frozenset
 
 def cpu_time():
     return resource.getrusage(resource.RUSAGE_SELF)[0]
