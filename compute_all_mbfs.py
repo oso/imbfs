@@ -1,6 +1,7 @@
 from __future__ import print_function
 import multiprocessing
 import pickle
+import resource
 from profiles import generate_profiles
 from mbf import compute_all_coalitions
 from mbf import mbf_from_profiles
@@ -68,7 +69,8 @@ def compute_all_mbfs(n):
     pool.close()
     pool.join()
 
-    print("total time: %.02f seconds" % cpu_time())
+    cpu_time_children = resource.getrusage(resource.RUSAGE_CHILDREN)[0]
+    print("total time: %.02f seconds" % cpu_time_children)
     print(count)
 
 if __name__ == "__main__":
