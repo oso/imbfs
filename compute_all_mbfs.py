@@ -1,5 +1,6 @@
 from __future__ import print_function
 import multiprocessing
+import pickle
 from profiles import generate_profiles
 from mbf import compute_all_coalitions
 from mbf import mbf_from_profiles
@@ -7,6 +8,7 @@ from mbf import cpu_time
 
 nprofiles_done = 0
 count = 0
+savedir = None
 
 def compute_number_of_mbfs_cb(result):
     global count
@@ -20,10 +22,12 @@ def compute_number_of_mbfs_cb(result):
           % (nprofiles_done, str(profile), k, t));
 
 def compute_number_of_mbfs(variables, profile, combis):
+    global savedir
+
     t1 = cpu_time()
 
     try:
-        k = len(mbf_from_profiles(variables, profile, combis))
+        mbfs = mbf_from_profiles(variables, profile, combis)
     except:
         import traceback
         print("Error with profile %s" % str(profile))
@@ -31,7 +35,13 @@ def compute_number_of_mbfs(variables, profile, combis):
 
     t = cpu_time() - t1
 
-    return profile, k, t
+    if savedir is not None:
+        filenameout = "-".join(map(str, profile)) + ".pkl"
+        fileout = open(savedir + filenameout, 'wb')
+        pickle.dump(mbfs, fileout)
+        fileout.close()
+
+    return profile, len(mbfs), t
 
 def compute_all_mbfs(n):
     global count
@@ -65,8 +75,9 @@ if __name__ == "__main__":
     import sys
     import multiprocessing
 
-    if len(sys.argv) != 2:
-        print("usage: %s n" % sys.argv[0])
+    if len(sys.argv) < 2:
+        print("usage: %s n [savedir]" % sys.argv[0])
         sys.exit(1)
 
+    savedir = sys.argv[2] + "/" if len(sys.argv) > 2 else None
     compute_all_mbfs(int(sys.argv[1]))
