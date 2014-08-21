@@ -1,7 +1,7 @@
 from __future__ import print_function
 import multiprocessing
 import pickle
-import resource
+import time
 from profiles import generate_profiles
 from mbf import compute_all_coalitions
 from mbf import mbf_from_profiles
@@ -47,6 +47,8 @@ def compute_number_of_mbfs(variables, profile, combis):
 def compute_all_mbfs(n):
     global count
 
+    t1 = time.time()
+
     print("Number of variables: %d" % n)
     print("Number of CPUs: %d" % multiprocessing.cpu_count())
 
@@ -69,8 +71,7 @@ def compute_all_mbfs(n):
     pool.close()
     pool.join()
 
-    cpu_time_children = resource.getrusage(resource.RUSAGE_CHILDREN)[0]
-    print("total time: %.02f seconds" % cpu_time_children)
+    print("total time: %.02f seconds" % (time.time() - t1))
     print(count)
 
 if __name__ == "__main__":
