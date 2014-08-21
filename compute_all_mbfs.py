@@ -49,7 +49,7 @@ def compute_all_mbfs(n):
     print("Number of variables: %d" % n)
     print("Number of CPUs: %d" % multiprocessing.cpu_count())
 
-    variables = tuple(["c%d" % (i + 1) for i in range(int(n))])
+    variables = tuple([(i + 1) for i in range(int(n))])
 
     profiles = generate_profiles(len(variables))
     print("Number of profiles: %d" % len(profiles))
