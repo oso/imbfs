@@ -1,7 +1,7 @@
 from __future__ import print_function
 from copy import deepcopy
 from itertools import combinations, product
-import resource
+from utils import cpu_time
 
 debug = False
 
@@ -18,9 +18,6 @@ if debug is True:
 else:
     coa = frozenset
     coaset = frozenset
-
-def cpu_time():
-    return resource.getrusage(resource.RUSAGE_SELF)[0]
 
 def compute_all_coalitions(variables, profiles):
     combis = {}

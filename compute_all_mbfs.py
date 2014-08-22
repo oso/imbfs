@@ -5,7 +5,7 @@ import time
 from profiles import generate_profiles
 from mbf import compute_all_coalitions
 from mbf import mbf_from_profiles
-from mbf import cpu_time
+from utils import cpu_time
 
 nprofiles_done = 0
 count = 0

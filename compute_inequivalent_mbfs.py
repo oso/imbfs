@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import pickle
 import time
-from mbf import cpu_time
+from utils import cpu_time
 from inequivalent import compute_permutations
 from inequivalent import find_inequivalent_mbfs
 
