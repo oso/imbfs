@@ -59,7 +59,8 @@ def compute_mbf(mbfs, combis, mbf):
             compute_mbf(mbfs, combis_new, mbf_new)
 
 def mbf_from_profiles(variables, profile, coalitions):
-    n = len(variables)
+    if sum(profile) == 0:
+        return set([frozenset()])
 
     l = []
     for i, k in enumerate(profile):
