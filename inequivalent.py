@@ -1,3 +1,4 @@
+import bz2
 import itertools
 
 def compute_permutations(variables):

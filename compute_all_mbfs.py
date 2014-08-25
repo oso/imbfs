@@ -1,4 +1,5 @@
 from __future__ import print_function
+import bz2
 import multiprocessing
 import pickle
 import time
@@ -37,8 +38,8 @@ def compute_number_of_mbfs(variables, profile, combis):
     t = cpu_time() - t1
 
     if savedir is not None:
-        filenameout = "-".join(map(str, profile)) + ".pkl"
-        fileout = open(savedir + filenameout, 'wb')
+        filenameout = "-".join(map(str, profile)) + ".pkl.bz2"
+        fileout = bz2.BZ2File(savedir + filenameout, 'wb')
         pickle.dump(mbfs, fileout)
         fileout.close()
 

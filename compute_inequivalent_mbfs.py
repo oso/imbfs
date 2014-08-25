@@ -1,4 +1,5 @@
 from __future__ import print_function
+import bz2
 import multiprocessing
 import os
 import pickle
@@ -29,7 +30,7 @@ def compute_inequivalent_mbfs(filepath):
 
     t1 = cpu_time()
 
-    f = open(filepath)
+    f = bz2.BZ2File(filepath, 'rb')
     mbfs = pickle.load(f)
     nmbfs = len(mbfs)
     imbfs = find_inequivalent_mbfs(mbfs, permutations)
@@ -38,11 +39,12 @@ def compute_inequivalent_mbfs(filepath):
     t = cpu_time() - t1
 
     profile = os.path.splitext(os.path.basename(filepath))[0]
+    profile = os.path.splitext(profile)[0]
     profile = tuple(map(int, profile.split("-")))
 
     if outdir is not None:
-        filenameout = "-".join(map(str, profile)) + ".pkl"
-        fileout = open(outdir + filenameout, 'wb')
+        filenameout = "-".join(map(str, profile)) + ".pkl.bz2"
+        fileout = bz2.BZ2File(outdir + filenameout, 'wb')
         pickle.dump(imbfs, fileout)
         fileout.close()
 
@@ -66,7 +68,7 @@ def compute_all_inequivalent_mbfs(n, indir, outd = None):
     pool = multiprocessing.Pool()
     n = 0
     for f in os.listdir(indir):
-        if f.endswith(".pkl") is False:
+        if f.endswith(".pkl.bz2") is False:
             continue
 
         pool.apply_async(compute_inequivalent_mbfs,
