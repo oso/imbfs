@@ -78,8 +78,7 @@ def compute_gmax(pset, fmins):
 
     return gmaxs
 
-def mbf_is_additive(mbf, variables):
-    pset = set([frozenset(p) for p in powerset(variables)])
+def mbf_is_additive(mbf, variables, pset):
     gmaxs = compute_gmax(pset, mbf)
     lbdas = cplex_lbda_minmax(variables, mbf, gmaxs)
     return False if lbdas is None else True
@@ -89,8 +88,9 @@ if __name__ == "__main__":
 
     n = 4
     variables = frozenset([(i + 1) for i in range(n)])
+    pset = set([frozenset(p) for p in powerset(variables)])
     mbf = frozenset([frozenset([1, 2]), frozenset([1, 4]), frozenset([3, 4])])
 
-    additive = mbf_is_additive(mbf, variables)
+    additive = mbf_is_additive(mbf, variables, pset)
     print("%s is %sadditive" % (mbf_to_str(mbf),
                                 "" if additive is True else "NOT "))
