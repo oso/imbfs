@@ -55,7 +55,7 @@ def compute_mbf(mbfs, combis, mbf):
             drop_supersets(combis_new, combi)
             compute_mbf(mbfs, combis_new, mbf_new)
 
-def mbf_from_profiles(variables, profile, coalitions):
+def mbfs_from_profiles(variables, profile, coalitions):
     if sum(profile) == 0:
         return set([frozenset()])
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         print("%d. Processing profile %s..." % ((i + 1), str(profile)),
               end = "")
         t1 = cpu_time()
-        k = len(mbf_from_profiles(variables, profile, combis))
+        k = len(mbfs_from_profiles(variables, profile, combis))
         print("\t%10d MBFs found (%.02f seconds)" % (k, (cpu_time() - t1)));
         n += k
 

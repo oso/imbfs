@@ -33,13 +33,13 @@ def find_inequivalent_mbfs(mbfs, perms):
 if __name__ == "__main__":
     import sys
     from mbf import compute_all_coalitions
-    from mbf import mbf_from_profiles
+    from mbf import mbfs_from_profiles
 
     variables = (1, 2, 3, 4)
     profile = (0, 3, 0, 0)
 
     combis = compute_all_coalitions(variables, [profile])
-    mbfs = mbf_from_profiles(variables, profile, combis)
+    mbfs = mbfs_from_profiles(variables, profile, combis)
 
     perms = compute_permutations(variables)
     print(perms)

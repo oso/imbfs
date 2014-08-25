@@ -4,7 +4,7 @@ import pickle
 import time
 from profiles import generate_profiles
 from mbf import compute_all_coalitions
-from mbf import mbf_from_profiles
+from mbf import mbfs_from_profiles
 from utils import cpu_time
 
 nprofiles_done = 0
@@ -28,7 +28,7 @@ def compute_number_of_mbfs(variables, profile, combis):
     t1 = cpu_time()
 
     try:
-        mbfs = mbf_from_profiles(variables, profile, combis)
+        mbfs = mbfs_from_profiles(variables, profile, combis)
     except:
         import traceback
         print("Error with profile %s" % str(profile))
