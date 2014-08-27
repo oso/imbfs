@@ -6,16 +6,17 @@ import pickle
 import time
 from utils import cpu_time
 from utils import powerset
-from additive import mbf_is_additive
+from kadditive import mbf_is_kadditive
 
 nprofiles_done = 0
 total_mbfs_count = 0
 total_imbfs_count = 0
 outdir = None
 variables = None
+kadditivity = 1
 pset = None
 
-def compute_nonadditive_mbfs_cb(result):
+def compute_nonkadditive_mbfs_cb(result):
     global total_mbfs_count
     global total_imbfs_count
     global nprofiles_done
@@ -29,10 +30,11 @@ def compute_nonadditive_mbfs_cb(result):
           "found (%.02f seconds)" % (nprofiles_done, str(profile), imbfs_count,
           nimbfs, mbfs_count, nmbfs, t))
 
-def compute_nonadditive_mbfs(filepath):
+def compute_nonkadditive_mbfs(filepath):
     global outdir
     global variables
     global pset
+    global kadditivity
 
     t1 = cpu_time()
 
@@ -43,7 +45,7 @@ def compute_nonadditive_mbfs(filepath):
     nmbfs = nimbfs = 0
     imbfs = set()
     for mbf, n in mbfs.items():
-        additive = mbf_is_additive(mbf, variables, pset)
+        additive = mbf_is_kadditive(mbf, kadditivity, variables, pset)
         if additive is False:
             imbfs.add(mbf)
             imbfs_count += 1
@@ -68,17 +70,20 @@ def compute_nonadditive_mbfs(filepath):
 
     return profile, nmbfs, nimbfs, mbfs_count, imbfs_count, t
 
-def compute_all_nonadditive_imbfs(n, indir, outd = None):
+def compute_all_nonkadditive_imbfs(n, k, indir, outd = None):
     global count
     global outdir
     global variables
     global pset
+    global kadditivity
 
     indir = indir + "/" if indir is not None else None
     outdir = outd + "/" if outd is not None else None
 
     variables = frozenset([(i + 1) for i in range(n)])
     pset = set([frozenset(p) for p in powerset(variables)])
+
+    kadditivity = int(k)
 
     t1 = time.time()
 
@@ -90,9 +95,9 @@ def compute_all_nonadditive_imbfs(n, indir, outd = None):
         if f.endswith(".pkl.bz2") is False:
             continue
 
-        pool.apply_async(compute_nonadditive_mbfs,
+        pool.apply_async(compute_nonkadditive_mbfs,
                          (indir + f,),
-                         callback = compute_nonadditive_mbfs_cb)
+                         callback = compute_nonkadditive_mbfs_cb)
 
     pool.close()
     pool.join()
@@ -105,9 +110,10 @@ if __name__ == "__main__":
     import sys
     import multiprocessing
 
-    if len(sys.argv) < 3:
-        print("usage: %s n indir [outdir]" % sys.argv[0])
+    if len(sys.argv) < 4:
+        print("usage: %s n k indir [outdir]" % sys.argv[0])
         sys.exit(1)
 
-    outd = sys.argv[3] if len(sys.argv) > 3 else None
-    compute_all_nonadditive_imbfs(int(sys.argv[1]), sys.argv[2], outd)
+    outd = sys.argv[4] if len(sys.argv) > 4 else None
+    compute_all_nonkadditive_imbfs(int(sys.argv[1]), sys.argv[2], sys.argv[3],
+                                   outd)
