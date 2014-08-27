@@ -43,11 +43,11 @@ def compute_nonkadditive_mbfs(filepath):
 
     mbfs_count = imbfs_count = 0
     nmbfs = nimbfs = 0
-    imbfs = set()
+    imbfs = {}
     for mbf, n in mbfs.items():
         additive = mbf_is_kadditive(mbf, kadditivity, variables, pset)
         if additive is False:
-            imbfs.add(mbf)
+            imbfs[mbf] = n
             imbfs_count += 1
             mbfs_count += n
 
