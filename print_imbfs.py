@@ -8,6 +8,9 @@ from utils import mbf_to_str
 print_profile = False
 
 def print_mbf_from_file(filepath):
+    if filepath.endswith(".pkl.bz2") is False:
+        return
+
     profile = os.path.basename(filepath)
     profile = os.path.splitext(os.path.splitext(profile)[0])[0]
 
