@@ -8,9 +8,6 @@ from utils import mbf_to_str
 print_profile = False
 
 def print_mbf_from_file(filepath):
-    if filepath.endswith(".pkl.bz2") is False:
-        return
-
     profile = os.path.basename(filepath)
     profile = os.path.splitext(os.path.splitext(profile)[0])[0]
 
@@ -21,8 +18,13 @@ def print_mbf_from_file(filepath):
     mbfs = pickle.load(f)
     f.close()
 
+    nmbfs = nimbfs = 0
     for mbf, n in mbfs.items():
         print("I%s (%d MBFs)" % (mbf_to_str(mbf), n))
+        nmbfs += n
+        nimbfs += 1
+
+    return nimbfs, nmbfs
 
 def main(argv):
     global print_profile
@@ -31,10 +33,18 @@ def main(argv):
     if argc > 2:
         print_profile = True
 
-    for i, f in enumerate(argv[1:]):
-        print_mbf_from_file(f)
-        if i < (argc - 2):
-            print("")
+    total_mbfs = total_imbfs = 0
+    for f in argv[1:]:
+        if f.endswith(".pkl.bz2") is False:
+            continue
+
+        nimbfs, nmbfs = print_mbf_from_file(f)
+        print("")
+        total_imbfs += nimbfs
+        total_mbfs += nmbfs
+
+    print("Total IMBFs: %d IMBFs" % total_imbfs)
+    print("Total MBFs : %d MBFs" % total_mbfs)
 
 if __name__ == "__main__":
     main(sys.argv)
