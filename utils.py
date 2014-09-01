@@ -6,8 +6,10 @@ def cpu_time():
 
 def mbf_to_str(mbf):
     string = "MBF("
-    if len(mbf) == 0:
-        return string + ")"
+    if mbf is None:
+        return strin + ")"
+    elif len(mbf) == 0:
+        return string + "[])"
 
     for s in mbf:
         string += "[" + ", ".join(map(str, s)) + "], "
