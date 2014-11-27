@@ -11,7 +11,8 @@ from kadditive import mbf_is_kadditive
 nprofiles_done = 0
 total_mbfs_count = 0
 total_imbfs_count = 0
-outdir = None
+outdir_na = None
+outdir_a = None
 variables = None
 kadditivity = 1
 pset = None
@@ -21,17 +22,18 @@ def compute_nonkadditive_mbfs_cb(result):
     global total_imbfs_count
     global nprofiles_done
 
-    profile, nmbfs, nimbfs, mbfs_count, imbfs_count, t = result
+    profile, nmbfs, nimbfs, na_mbfs_count, na_imbfs_count, t = result
     nprofiles_done += 1
-    total_imbfs_count += imbfs_count
-    total_mbfs_count += mbfs_count
+    total_imbfs_count += na_imbfs_count
+    total_mbfs_count += na_mbfs_count
 
     print("%d. Profile %s done!\t%10d (/%d) non-additives iMBFs (%d/%d MBFS) "
-          "found (%.02f seconds)" % (nprofiles_done, str(profile), imbfs_count,
-          nimbfs, mbfs_count, nmbfs, t))
+          "found (%.02f seconds)" % (nprofiles_done, str(profile),
+          na_imbfs_count, nimbfs, na_mbfs_count, nmbfs, t))
 
 def compute_nonkadditive_mbfs(filepath):
-    global outdir
+    global outdir_na
+    global outdir_a
     global variables
     global pset
     global kadditivity
@@ -41,15 +43,20 @@ def compute_nonkadditive_mbfs(filepath):
     f = bz2.BZ2File(filepath, 'rb')
     mbfs = pickle.load(f)
 
-    mbfs_count = imbfs_count = 0
+    na_mbfs_count = na_imbfs_count = 0
+    a_mbfs_count = a_imbfs_count = 0
+    na_imbfs, a_imbfs = {}, {}
     nmbfs = nimbfs = 0
-    imbfs = {}
     for mbf, n in mbfs.items():
         additive = mbf_is_kadditive(mbf, kadditivity, variables, pset)
         if additive is False:
-            imbfs[mbf] = n
-            imbfs_count += 1
-            mbfs_count += n
+            na_imbfs[mbf] = n
+            na_imbfs_count += 1
+            na_mbfs_count += n
+        else:
+            a_imbfs[mbf] = n
+            a_imbfs_count += 1
+            a_mbfs_count += n
 
         nimbfs += 1
         nmbfs += n
@@ -62,23 +69,31 @@ def compute_nonkadditive_mbfs(filepath):
     profile = os.path.splitext(profile)[0]
     profile = tuple(map(int, profile.split("-")))
 
-    if outdir is not None and len(imbfs) > 0:
+    if outdir_na is not None and len(na_imbfs) > 0:
         filenameout = "-".join(map(str, profile)) + ".pkl.bz2"
-        fileout = bz2.BZ2File(outdir + filenameout, 'wb')
-        pickle.dump(imbfs, fileout)
+        fileout = bz2.BZ2File(outdir_na + filenameout, 'wb')
+        pickle.dump(na_imbfs, fileout)
         fileout.close()
 
-    return profile, nmbfs, nimbfs, mbfs_count, imbfs_count, t
+    if outdir_a is not None and len(a_imbfs) > 0:
+        filenameout = "-".join(map(str, profile)) + ".pkl.bz2"
+        fileout = bz2.BZ2File(outdir_a + filenameout, 'wb')
+        pickle.dump(a_imbfs, fileout)
+        fileout.close()
 
-def compute_all_nonkadditive_imbfs(n, k, indir, outd = None):
+    return profile, nmbfs, nimbfs, na_mbfs_count, na_imbfs_count, t
+
+def compute_all_nonkadditive_imbfs(n, k, indir, outd_na = None, outd_a = None):
     global count
-    global outdir
+    global outdir_na
+    global outdir_a
     global variables
     global pset
     global kadditivity
 
     indir = indir + "/" if indir is not None else None
-    outdir = outd + "/" if outd is not None else None
+    outdir_na = outd_na + "/" if outd_na is not None else None
+    outdir_a = outd_a + "/" if outd_a is not None else None
 
     variables = frozenset([(i + 1) for i in range(n)])
     pset = set([frozenset(p) for p in powerset(variables)])
@@ -111,9 +126,10 @@ if __name__ == "__main__":
     import multiprocessing
 
     if len(sys.argv) < 4:
-        print("usage: %s n k indir [outdir]" % sys.argv[0])
+        print("usage: %s n k indir [outdir_nadd] [outdir_add]" % sys.argv[0])
         sys.exit(1)
 
-    outd = sys.argv[4] if len(sys.argv) > 4 else None
+    outd_na = sys.argv[4] if len(sys.argv) > 4 else None
+    outd_a = sys.argv[5] if len(sys.argv) > 5 else None
     compute_all_nonkadditive_imbfs(int(sys.argv[1]), sys.argv[2], sys.argv[3],
-                                   outd)
+                                   outd_na, outd_a)
