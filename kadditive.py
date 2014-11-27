@@ -102,13 +102,16 @@ def cplex_lbda_minmax(variables, fmins, gmaxs, kadditivity, epsilon = 0.00001):
     if status != lp.solution.status.optimal:
         return None
 
+    wmin = dict(zip(wlist, lp.solution.get_values(wlist)))
     lbdamin = lp.solution.get_objective_value()
 
     lp.objective.set_sense(lp.objective.sense.maximize)
     lp.solve()
+
+    wmax = dict(zip(wlist, lp.solution.get_values(wlist)))
     lbdamax = lp.solution.get_objective_value()
 
-    return lbdamin, lbdamax
+    return wmin, lbdamin, wmax, lbdamax
 
 def compute_gmax(pset, fmins):
     gmaxs = pset.copy()
@@ -126,8 +129,12 @@ def compute_gmax(pset, fmins):
 
 def mbf_is_kadditive(mbf, kadditivity, variables, pset):
     gmaxs = compute_gmax(pset, mbf)
-    lbdas = cplex_lbda_minmax(variables, mbf, gmaxs, kadditivity)
-    return False if lbdas is None else True
+    additive = cplex_lbda_minmax(variables, mbf, gmaxs, kadditivity)
+    return False if additive is None else True
+
+def mbf_compute_mobius_and_lbda(mbf, kadditivity, variables, pset):
+    gmaxs = compute_gmax(pset, mbf)
+    return cplex_lbda_minmax(variables, mbf, gmaxs, kadditivity)
 
 if __name__ == "__main__":
     from utils import mbf_to_str
