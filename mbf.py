@@ -1,6 +1,6 @@
 from __future__ import print_function
 from copy import deepcopy
-from itertools import combinations, product
+from itertools import combinations, permutations, product
 from utils import cpu_time
 
 debug = False
@@ -68,6 +68,17 @@ def mbfs_from_profiles(variables, profile, coalitions):
 
     mbfs = set()
     compute_mbf(mbfs, l[:], coaset())
+
+    return mbfs
+
+def compute_equivalent_mbfs(variables, mbf):
+    perms = list(permutations(variables, len(variables)))[1:]
+
+    mbfs = set([mbf])
+    for p in perms:
+        f = dict(zip(variables, p))
+        mbf2 = frozenset(frozenset(map(lambda x: f[x], c)) for c in mbf)
+        mbfs.add(mbf2)
 
     return mbfs
 
