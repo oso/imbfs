@@ -102,13 +102,13 @@ def cplex_lbda_minmax(variables, fmins, gmaxs, kadditivity, epsilon = 0.00001):
     if status != lp.solution.status.optimal:
         return None
 
-    wmin = dict(zip(wlist, lp.solution.get_values(wlist)))
+    wmin = dict(zip([eval(w) for w in wlist], lp.solution.get_values(wlist)))
     lbdamin = lp.solution.get_objective_value()
 
     lp.objective.set_sense(lp.objective.sense.maximize)
     lp.solve()
 
-    wmax = dict(zip(wlist, lp.solution.get_values(wlist)))
+    wmax = dict(zip([eval(w) for w in wlist], lp.solution.get_values(wlist)))
     lbdamax = lp.solution.get_objective_value()
 
     return wmin, lbdamin, wmax, lbdamax
