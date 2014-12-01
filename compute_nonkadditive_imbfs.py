@@ -91,7 +91,7 @@ def compute_nonkadditive_mbfs(filepath):
 
     if outdir_params is not None and len(a_imbfs_params) > 0:
         filenameout = "-".join(map(str, profile)) + ".pkl.bz2"
-        fileout = bz2.BZ2File(outdir_a + filenameout, 'wb')
+        fileout = bz2.BZ2File(outdir_params + filenameout, 'wb')
         pickle.dump(a_imbfs_params, fileout)
         fileout.close()
 
