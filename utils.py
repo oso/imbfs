@@ -17,6 +17,11 @@ def mbf_to_str(mbf):
     string = string[:-2] + ")"
     return string
 
+def mbf_str_hash(mbf):
+    sortfn = lambda x: "%d-%s" % (len(x), "".join(str(sorted(x))))
+    return "-".join(map(str, ["".join(map(str, s))
+                              for s in sorted(mbf, key = sortfn)]))
+
 def powerset(iterable):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
