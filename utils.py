@@ -11,7 +11,8 @@ def mbf_to_str(mbf):
     elif len(mbf) == 0:
         return string + "[])"
 
-    for s in mbf:
+    sortfn = lambda x: "%d-%s" % (len(x), "".join(str(sorted(x))))
+    for s in sorted(mbf, key = sortfn):
         string += "[" + ", ".join(map(str, s)) + "], "
     string = string[:-2] + ")"
     return string
