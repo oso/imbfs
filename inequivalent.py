@@ -1,5 +1,6 @@
 import bz2
 import itertools
+from utils import mbf_str_hash
 
 def compute_permutations(variables):
     return [dict(zip(variables, i))
@@ -7,27 +8,29 @@ def compute_permutations(variables):
 
 def permute_indices(mbf, perm):
     f = lambda i: perm[i]
-
-    mbfeq = set()
-    for coa in mbf:
-        coaeq = frozenset(map(f, coa))
-        mbfeq.add(coaeq)
-
-    return mbfeq
+    return frozenset([frozenset(map(f, coa)) for coa in mbf])
 
 def find_inequivalent_mbfs(mbfs, perms):
     imbfs = dict()
 
     while len(mbfs) > 0:
         mbf = mbfs.pop()
-        imbfs[mbf] = 1
+        n = 1
+        mbf_hash, imbf = mbf_str_hash(mbf), mbf
 
         for perm in perms:
             mbfeq = permute_indices(mbf, perm)
+
+            mbfeq_hash = mbf_str_hash(mbfeq)
+            if mbfeq_hash < mbf_hash:
+                mbf_hash, imbf = mbfeq_hash, mbfeq
+
             for mbf2 in mbfs.copy():
                 if mbfeq == mbf2:
                     mbfs.discard(mbf2)
-                    imbfs[mbf] += 1
+                    n += 1
+
+            imbfs[imbf] = n
 
     return imbfs
 
