@@ -4,6 +4,7 @@ import os
 import pickle
 import sys
 from utils import mbf_to_str
+from utils import mbf_str_hash
 
 print_profile = False
 
@@ -19,7 +20,9 @@ def print_mbf_from_file(filepath):
     f.close()
 
     nmbfs = nimbfs = 0
-    for mbf, n in mbfs.items():
+    mbfs_keys = sorted(mbfs.keys(), key = lambda x: mbf_str_hash(x))
+    for mbf in mbfs_keys:
+        n = mbfs[mbf]
         print("I%s (%d MBFs)" % (mbf_to_str(mbf), n))
         nmbfs += n
         nimbfs += 1
