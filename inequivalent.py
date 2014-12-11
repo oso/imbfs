@@ -21,16 +21,16 @@ def find_inequivalent_mbfs(mbfs, perms):
         for perm in perms:
             mbfeq = permute_indices(mbf, perm)
 
-            mbfeq_hash = mbf_str_hash(mbfeq)
-            if mbfeq_hash < mbf_hash:
-                mbf_hash, imbf = mbfeq_hash, mbfeq
-
             for mbf2 in mbfs.copy():
                 if mbfeq == mbf2:
                     mbfs.discard(mbf2)
                     n += 1
 
-            imbfs[imbf] = n
+                    mbfeq_hash = mbf_str_hash(mbfeq)
+                    if mbfeq_hash < mbf_hash:
+                        mbf_hash, imbf = mbfeq_hash, mbfeq
+
+        imbfs[imbf] = n
 
     return imbfs
 
